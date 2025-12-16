@@ -14,6 +14,7 @@ export class MFAPage {
   }
 
   async continueAfterPassword() {
+    await this.page.waitForLoadState('networkidle');
     await this.nextBtn.click();
   }
 
