@@ -7,7 +7,7 @@ export async function createContext(): Promise<BrowserContext> {
   }
 
   return chromium.launchPersistentContext('./user-data', {
-    headless: false,
+    headless: true,
     args: [
       '--disable-site-isolation-trials',
       '--unlimited-storage',
