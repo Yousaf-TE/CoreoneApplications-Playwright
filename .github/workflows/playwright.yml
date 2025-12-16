@@ -38,8 +38,8 @@ jobs:
 
       - name: Run Playwright tests
         env:
-          EMAIL: ${{ secrets.EMAIL }}
-          PASSWORD: ${{ secrets.PASSWORD }}
+          TEQ_EMAIL: ${{ secrets.TEQ_EMAIL }}
+          TEQ_PASSWORD: ${{ secrets.TEQ_PASSWORD }}
         run: npx playwright test
 
       - name: Upload Playwright report
