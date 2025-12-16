@@ -1,58 +1,60 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
 import { defineConfig, devices } from '@playwright/test';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export default defineConfig({
   testDir: './tests',
 
-  // ⏱ Global Test Timeout (each test can run up to 60 sec)
-  timeout: 60000,
+  timeout: 60_000,
 
-  // ⏱ Global Expect Timeout (assertions wait up to 60 sec)
   expect: {
-    timeout: 60000,
+    timeout: 60_000,
   },
 
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: 'html',
 
- use: {
-  baseURL: 'https://next-op-staging.vercel.app/',
-  
- 
-  launchOptions: {
-    args: [
-      '--disable-site-isolation-trials',
-      '--unlimited-storage',
-      '--disable-web-security',
-      '--allow-running-insecure-content'
-    ]
-  },
+  reporter: [['html', { open: 'never' }]],
 
+  use: {
+    baseURL: 'https://next-op-staging.vercel.app/',
 
-    // ⏱ Action and Navigation timeouts (optional, but good practice)
-    navigationTimeout: 60000,
-    actionTimeout: 60000,
+    /**
+     * ✅ CRITICAL FIX
+     * GitHub Actions has no display server
+     */
+    headless: true,
+
+    /**
+     * Chromium launch arguments
+     */
+    launchOptions: {
+      args: [
+        '--disable-site-isolation-trials',
+        '--disable-dev-shm-usage',
+        '--disable-web-security',
+        '--allow-running-insecure-content',
+        '--no-sandbox',
+      ],
+    },
+
+    navigationTimeout: 60_000,
+    actionTimeout: 60_000,
 
     trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
   },
 
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+      },
     },
-    // {
-    //   name: 'firefox',
-    //   use: { ...devices['Desktop Firefox'] },
-    // },
-    // {
-    //   name: 'webkit',
-    //   use: { ...devices['Desktop Safari'] },
-    // },
   ],
 });
